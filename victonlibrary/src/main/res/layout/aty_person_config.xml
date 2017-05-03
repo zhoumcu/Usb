@@ -1,0 +1,264 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:id="@+id/bg_ground"
+    android:background="@color/home_bg"
+    android:padding="10dp"
+    >
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="1">
+
+        <TextView
+            style="@style/line"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="主题切换"
+            android:visibility="gone"
+            android:textColor="@color/colorPrimary" />
+
+        <View
+            android:visibility="gone"
+            style="@style/divider_line_1dp_gray"
+            />
+
+        <LinearLayout
+            android:visibility="gone"
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                style="@style/line"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:text="白天模式/夜间模式"
+                android:textColor="@color/white"
+                android:paddingTop="5dp"
+                android:paddingBottom="5dp"
+                android:layout_marginLeft="5dp"
+                android:id="@+id/tv_changetheme"
+                android:layout_weight="1" />
+
+            <Switch
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text=""
+                android:padding="10dp"
+                android:id="@+id/switch2"
+                android:layout_gravity="right" />
+        </LinearLayout>
+        <TextView
+            style="@style/line"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="横屏竖屏切换"
+            android:textColor="@color/colorPrimary"
+            android:visibility="gone" />
+
+        <View
+            style="@style/divider_line_1dp_gray"
+            android:visibility="gone" />
+
+        <TextView
+            style="@style/line"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:text="竖屏"
+            android:textColor="@color/white"
+            android:id="@+id/tv_land_port"
+            android:paddingTop="5dp"
+            android:paddingBottom="5dp"
+            android:layout_marginLeft="5dp"
+            android:visibility="gone" />
+        <TextView
+            style="@style/line"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="低压报警值（Bar）"
+            android:textColor="@color/colorPrimary" />
+
+        <View
+            style="@style/divider_line_1dp_gray"
+            />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:orientation="horizontal">
+            <SeekBar
+                style="@style/Widget.AppCompat.SeekBar.Discrete"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:max="9"
+                android:progress="1"
+                android:id="@+id/lowPress_seekBar" />
+            <TextView
+                style="@style/line"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:text="1.7"
+                android:id="@+id/lowPressValue"
+                android:textColor="@color/colorPrimary" />
+
+        </LinearLayout>
+
+        <TextView
+            style="@style/line"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="高压报警值（Bar）"
+            android:textColor="@color/colorPrimary" />
+
+        <View
+            style="@style/divider_line_1dp_gray"
+            />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:orientation="horizontal">
+            <SeekBar
+                style="@style/Widget.AppCompat.SeekBar.Discrete"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:max="13"
+                android:progress="2"
+                android:id="@+id/highPress_seekBar" />
+            <TextView
+                style="@style/line"
+                android:id="@+id/highPressValue"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:text="3.0"
+                android:textColor="@color/colorPrimary" />
+
+        </LinearLayout>
+        <TextView
+            style="@style/line"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="高温报警值（Bar）"
+            android:textColor="@color/colorPrimary" />
+
+        <View
+            style="@style/divider_line_1dp_gray"
+            />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:orientation="horizontal">
+            <SeekBar
+                style="@style/Widget.AppCompat.SeekBar.Discrete"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:max="30"
+                android:progress="15"
+                android:id="@+id/highTemp_seekBar" />
+            <TextView
+                style="@style/line"
+                android:id="@+id/highTempValue"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:text="65"
+                android:textColor="@color/colorPrimary" />
+
+        </LinearLayout>
+
+        <TextView
+            style="@style/line"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="单位设定"
+            android:textColor="@color/colorPrimary" />
+
+        <View
+            style="@style/divider_line_1dp_gray"
+            />
+
+        <TextView
+            style="@style/line"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:text="Kpa"
+            android:textColor="@color/white"
+            android:id="@+id/tv_preesure"
+            android:paddingTop="5dp"
+            android:paddingBottom="5dp"
+            android:layout_marginLeft="5dp" />
+
+        <View
+            style="@style/divider_line_1dp_gray"
+            />
+
+        <TextView
+            style="@style/line"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="℃"
+            android:textColor="@color/white"
+            android:id="@+id/tv_temp"
+            android:paddingTop="5dp"
+            android:paddingBottom="5dp"
+            android:layout_marginLeft="5dp" />
+
+        <TextView
+            style="@style/line"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="信息"
+            android:textColor="@color/colorPrimary" />
+
+        <View
+            style="@style/divider_line_1dp_gray"
+            />
+
+        <TextView
+            style="@style/line"
+            android:layout_width="357dp"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="@string/codeVersion"
+            android:textColor="@color/white"
+            android:paddingBottom="5dp"
+            android:paddingTop="5dp"
+            android:layout_marginLeft="5dp" />
+
+        <TextView
+            style="@style/line"
+            android:layout_width="363dp"
+            android:layout_height="wrap_content"
+            android:textColor="@color/blue"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="许可证及隐私条款"
+            android:id="@+id/access"
+            android:paddingTop="5dp"
+            android:paddingBottom="5dp"
+            android:layout_marginLeft="5dp" />
+
+    </LinearLayout>
+
+</ScrollView>

@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
+    android:id="@+id/bg_ground"
+    android:background="?attr/press_bg"
+    android:orientation="vertical">
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/img_setting"
+        android:layout_margin="15dp"
+        android:layout_gravity="right|bottom"
+        android:src="@mipmap/shezhi"
+        android:visibility="gone" />
+
+    <FrameLayout
+        android:id="@+id/fragment_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="1.0"
+        >
+
+    </FrameLayout>
+
+    <include layout="@layout/aty_day_titlebar">
+
+    </include>
+
+
+</FrameLayout>

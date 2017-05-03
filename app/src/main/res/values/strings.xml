@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">Usb</string>
+    <string name="DevStatus">状态</string>
+    <string name="text">到此为止：发现设备->枚举设备->找到设备的接口->连接设备->分配相应的端点，都已完成，下一步可以进行通讯处理。。祝你好运！</string>
+</resources>
