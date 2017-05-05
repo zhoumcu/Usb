@@ -61,18 +61,18 @@ public class DataHelper {
         if(data.length==0) return bleData;
         if(data.length==4) {
             Logger.d(TAG,"press"+parsePress(data[1]));
-            press = ((float)DigitalTrans.byteToAlgorism(data[1])*160)/51/100;
-            temp = (float)(DigitalTrans.byteToAlgorism(data[2])-50);
+            press = parsePress(data[1]);
+            temp = (float)(DigitalTrans.byteToAlgorism(data[2])-40);
             state = DigitalTrans.byteToBin0x0F(data[3]);
             press = Math.round(press*10)*0.1f;
             if(SharedPreferences.getInstance().getString(Constants.PRESSUER_DW, "Bar").equals("Bar")) {
                 pressStr = df.format(press);
             }else if(SharedPreferences.getInstance().getString(Constants.PRESSUER_DW, "Bar").equals("Kpa")) {
                 press = Math.round(press*102*10)*0.1f;
-                pressStr = String.valueOf(press);
+                pressStr = df.format(press);
             }else{
                 press = Math.round(press*14.5f*10)*0.1f;
-                pressStr = String.valueOf(press);
+                pressStr = df.format(press);
             }
             if(SharedPreferences.getInstance().getString(Constants.TEMP_DW, "℃").equals("℃")) {
                 temp1 = (int)temp;
@@ -88,10 +88,10 @@ public class DataHelper {
                 pressStr = df.format(press);
             }else if(SharedPreferences.getInstance().getString(Constants.PRESSUER_DW, "Bar").equals("Kpa")) {
                 press = Math.round(press*102*10)*0.1f;
-                pressStr = String.valueOf(press);
+                pressStr = df.format(press);
             }else{
                 press = Math.round(press*14.5f*10)*0.1f;
-                pressStr = String.valueOf(press);
+                pressStr = df.format(press);
             }
             if(SharedPreferences.getInstance().getString(Constants.TEMP_DW, "℃").equals("℃")) {
                 temp1 = (int)temp;
@@ -134,7 +134,16 @@ public class DataHelper {
         //状态检测
         if(date.getStatus()==1||date.getStatus()==2||date.getStatus()==4) {
             buffer.append(statusData[date.getStatus()] + " ");
+        }else if(date.getStatus()==80){
+            buffer.append(statusData[8] + " ");
+        }else if(date.getStatus()==40){
+            buffer.append(statusData[7] + " ");
+        }else if(date.getStatus()==20){
+            buffer.append(statusData[6] + " ");
+        }else if(date.getStatus()==10){
+            buffer.append(statusData[5] + " ");
         }
+
         if (buffer.toString().contains("快漏")||date.getPress() > maxPress || date.getPress() < minPress || date.getTemp() >= maxTemp ? true: false) {
             //高压
             date.setIsError(true);
@@ -168,7 +177,7 @@ public class DataHelper {
                 .subscribe(s);
     }
     private static float parsePress(byte data){
-        float integer = DigitalTrans.byteToAlgorism((byte) ((data>>4)&(byte) 0xF0));
+        float integer = DigitalTrans.byteToAlgorism((byte) ((data>>4)&(byte) 0x0F));
         float decimal =DigitalTrans.byteToAlgorism((byte) (data&(byte) 0x0F));
         return integer+decimal/10;
     }

@@ -95,10 +95,9 @@ public class ManageDevice implements Serializable{
 //    String SAT = "保留";
 //    String SUN = "异常，传感器未能获取胎压信息";
     public static enum  status{
-        慢漏(0),快漏(1), 传感器低电(2),轮胎过热(3),轮胎过压(4),轮胎欠压(5),保留6(6),传感器失效(7),保留(8);
+        保留0(0),慢漏(1),快漏(2), 传感器低电(3),轮胎过热(4),轮胎过压(5),轮胎欠压(6),保留6(7),传感器失效(8),保留(9);
         private final int mValue;
-        status(int value)
-        {
+        status(int value) {
             mValue = value;
         }
     }

@@ -384,7 +384,7 @@ public class DigitalTrans {
      * @return
      */
     public static final int byteToBin0x0F(byte d) {
-        return parseToInt(Integer.toHexString(0x0F & d),0);
+        return parseToInt(Integer.toHexString(0xFF & d),0);
 //        return Integer.valueOf(algorismToHEXString(byteToAlgorism(d)&0x0f));
 //        return Integer.valueOf(hexStringToAlgorism(byte2hex(d&0x0f));
     }
