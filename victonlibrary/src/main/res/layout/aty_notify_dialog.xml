@@ -47,7 +47,7 @@
 
             <Button
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:text="完成，进行下一个配对"
                 android:id="@+id/btn_finish"
                 android:background="@null"
@@ -68,7 +68,7 @@
             <Button
                 style="?android:attr/buttonStyleSmall"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:text="重试"
                 android:textColor="@color/white"
                 android:background="@color/colorPrimary"
@@ -80,7 +80,7 @@
             <Button
                 style="?android:attr/buttonStyleSmall"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:text="跳过"
                 android:background="@null"
                 android:id="@+id/btn_next"
