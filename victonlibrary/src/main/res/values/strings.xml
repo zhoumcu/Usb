@@ -48,7 +48,7 @@
         <string name="distancs_unit">db</string>
         <string name="retry">重试</string>
         <string name="change">点击更换</string>
-        <string name="unbund">点击解绑</string>
+        <string name="unbund">取消配对</string>
         <string name="unbund_success">点击绑定</string>
 
         <string name="erroinfo">蓝牙还未连接上，退出等待蓝牙连接上之后再进入</string>

@@ -41,11 +41,6 @@ public class MainFragment extends WictonBleBaseFragment {
         return root;
     }
     private void initView(){
-//        ManageDevice manageDevice = new ManageDevice();
-//        manageDevice.setLeftFDevice("88:C2:55:AC:5F:48");
-//        manageDevice.setRightFDevice("88:C2:55:AC:5E:8B");
-//        manageDevice.setLeftBDevice("88:C2:55:AC:5E:5F");
-//        manageDevice.setRightBDevice("88:C2:55:AC:5E:AB");
         initDefaultData(manageDevice);
     }
 

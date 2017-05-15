@@ -37,6 +37,7 @@ public class Constants {
 
     public static final String HIGH_PRESS = "high_press";
     public static final String HIGH_TEMP = "high_temp";
+
     public static int deviceId = 1001;
 
     public static final String LoW_PRESS = "low_press";
@@ -47,6 +48,7 @@ public class Constants {
     public static final String PAIRED_RIGHT_BACK = "FFF50300003033";
     public static final String SLEEP_MODE = "FFF50300050008";
     public static final String CANCEL_PAIRED = "FFF5030000FF02";
+    public static final String CHECK_IS_PARIED = "FFF5030005FB03";
 
     public static final String HIGH_PRESS_VALUES = "FFF50300010008";
     public static final String LOW_PRESS_VALUES = "FFF50300020008";

@@ -113,6 +113,45 @@ public class ReceviceUsbDataThread extends Thread {
     }
     private UsbData parseData(byte[] filebytes){
         byte sumByte = 0x00;
+        int fromPos = 0;
+        for(int i=0;i<3;i++){
+//            Logger.d(TAG,DigitalTranis.byteToString(filebytes[fromPos])+DigitalTrans.byteToString(filebytes[fromPos+1]));
+            if(filebytes[fromPos]!=(byte) 0xFF&&filebytes[fromPos+1]!=(byte)0xF5){
+                Logger.d(TAG,"无效数据！");
+                continue;
+            }
+            int lenght = DigitalTrans.byteToBin0x0F(filebytes[fromPos + 2]);
+//            Logger.d(TAG,"长度="+lenght);
+            for (int j= 2;j<=lenght+2;j++){
+                sumByte += filebytes[fromPos+j];
+//                Logger.d(TAG,DigitalTrans.byteToString(filebytes[fromPos+j]));
+                Logger.d(TAG,"前端接收数据："+DigitalTrans.byteToString(sumByte));
+            }
+            Logger.d(TAG,DigitalTrans.byteToString(sumByte)+DigitalTrans.byteToString(filebytes[fromPos+lenght+3]));
+            if(sumByte!=filebytes[fromPos+lenght+3]){
+                Logger.d(TAG,"校验和出错！");
+               continue;
+            }
+            byte[] data = new byte[lenght-2];
+            UsbData usbData = new UsbData();
+            usbData.setDeviceID(filebytes[fromPos+3]);
+            usbData.setCommand(filebytes[fromPos+4]);
+            usbData.setTireType(filebytes[fromPos+5]);
+            for (int l= 5;l<lenght+3;l++){
+                data[l-5] = filebytes[fromPos+l];
+            }
+            usbData.setData(data);
+            Log.i(TAG, "接收返回值:" + DigitalTrans.Bytes2HexString(data));
+//            Logger.i("后台接收广播数据："+ SharedPreferences.getInstance().getBoolean("isAppOnForeground",false));
+            broadcastUpdate(UsbComService.SCAN_FOR_RESULT, usbData);
+            fromPos +=(lenght+3);
+            if(fromPos>21) break;
+        }
+        return null;
+    }
+    private UsbData parseData1(byte[] filebytes){
+        byte sumByte = 0x00;
+        int bytelg = filebytes.length;
         for(int i= 0;i<3;i++){
             int fromPos = i * 10;
 //            Logger.d(TAG,DigitalTrans.byteToString(filebytes[fromPos])+DigitalTrans.byteToString(filebytes[fromPos+1]));
@@ -126,8 +165,8 @@ public class ReceviceUsbDataThread extends Thread {
                 sumByte += filebytes[fromPos+j];
 //                Logger.d(TAG,DigitalTrans.byteToString(filebytes[fromPos+j]));
             }
-            Logger.d(TAG,DigitalTrans.byteToString(sumByte)+DigitalTrans.byteToString(filebytes[lenght+3]));
-            if(sumByte!=filebytes[lenght+3]){
+            Logger.d(TAG,DigitalTrans.byteToString(sumByte)+DigitalTrans.byteToString(filebytes[fromPos+lenght+3]));
+            if(sumByte!=filebytes[fromPos+lenght+3]){
                 Logger.d(TAG,"校验和出错！");
                 continue;
             }

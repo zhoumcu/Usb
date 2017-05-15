@@ -8,10 +8,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.text.TextUtils;
 
+import com.victon.tpms.base.module.main.fragment.BaseFragment;
 import com.victon.tpms.common.ble.BluetoothLeService;
 import com.victon.tpms.common.usb.UsbComService;
 import com.victon.tpms.common.usb.UsbData;
@@ -22,7 +22,7 @@ import com.victon.tpms.entity.ManageDevice;
 /**
  * Created by Administrator on 2016/7/28.
  */
-public abstract class BaseBleConnetFragment extends Fragment{
+public abstract class BaseBleConnetFragment extends BaseFragment {
     private final static String TAG = BaseBleConnetFragment.class.getSimpleName();
     private FragmentActivity context;
     private static final int REQUEST_ENABLE_BT = 1;

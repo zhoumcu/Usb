@@ -132,17 +132,18 @@ public class DataHelper {
         buffer.append(date.getTemp() > maxTemp ? "高温" + " " : "");
         ManageDevice.status[] statusData = ManageDevice.status.values();
         //状态检测
-        if(date.getStatus()==1||date.getStatus()==2||date.getStatus()==4) {
+        if(date.getStatus()==1||date.getStatus()==2) {
             buffer.append(statusData[date.getStatus()] + " ");
         }else if(date.getStatus()==80){
             buffer.append(statusData[8] + " ");
-        }else if(date.getStatus()==40){
-            buffer.append(statusData[7] + " ");
-        }else if(date.getStatus()==20){
-            buffer.append(statusData[6] + " ");
-        }else if(date.getStatus()==10){
-            buffer.append(statusData[5] + " ");
         }
+//        else if(date.getStatus()==40){
+//            buffer.append(statusData[7] + " ");
+//        }else if(date.getStatus()==20){
+//            buffer.append(statusData[6] + " ");
+//        }else if(date.getStatus()==10){
+//            buffer.append(statusData[5] + " ");
+//        }
 
         if (buffer.toString().contains("快漏")||date.getPress() > maxPress || date.getPress() < minPress || date.getTemp() >= maxTemp ? true: false) {
             //高压

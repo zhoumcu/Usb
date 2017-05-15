@@ -2,13 +2,11 @@ package com.victon.tpms.base.module.main.fragment;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -103,34 +101,38 @@ public class BundTalentDeviceFragment extends BaseBleConnetFragment {
     }
 
     private void initIsCofigBle() {
-        if(manageDevice.getLeftFDevice()==null||manageDevice.getLeftFDevice().equals("null")) {
+//        if(manageDevice.getLeftFDevice()==null||manageDevice.getLeftFDevice().equals("null")) {
             topleft_next.setText("点击绑定");
             topleft_next.setBackgroundResource(R.mipmap.b_btn);
-        }else {
-            topleft_next.setText("点击解绑");
-            topleft_next.setBackgroundResource(R.mipmap.unbund);
-        }
-        if(manageDevice.getRightFDevice()==null||manageDevice.getRightFDevice().equals("null")) {
+//        }
+//        else {
+//            topleft_next.setText(R.string.unbund);
+//            topleft_next.setBackgroundResource(R.mipmap.unbund);
+//        }
+//        if(manageDevice.getRightFDevice()==null||manageDevice.getRightFDevice().equals("null")) {
             topright_next.setText("点击绑定");
             topright_next.setBackgroundResource(R.mipmap.b_btn);
-        }else {
-            topright_next.setText("点击解绑");
-            topright_next.setBackgroundResource(R.mipmap.unbund);
-        }
-        if(manageDevice.getLeftBDevice()==null||manageDevice.getLeftBDevice().equals("null")) {
+//        }
+//        else {
+//            topright_next.setText(R.string.unbund);
+//            topright_next.setBackgroundResource(R.mipmap.unbund);
+//        }
+//        if(manageDevice.getLeftBDevice()==null||manageDevice.getLeftBDevice().equals("null")) {
             bottomleft_next.setText("点击绑定");
             bottomleft_next.setBackgroundResource(R.mipmap.b_btn);
-        }else {
-            bottomleft_next.setText("点击解绑");
-            bottomleft_next.setBackgroundResource(R.mipmap.unbund);
-        }
-        if(manageDevice.getRightBDevice()==null||manageDevice.getRightBDevice().equals("null")) {
+//        }
+//        else {
+//            bottomleft_next.setText(R.string.unbund);
+//            bottomleft_next.setBackgroundResource(R.mipmap.unbund);
+//        }
+//        if(manageDevice.getRightBDevice()==null||manageDevice.getRightBDevice().equals("null")) {
             bottomright_next.setText("点击绑定");
             bottomright_next.setBackgroundResource(R.mipmap.b_btn);
-        }else {
-            bottomright_next.setText("点击解绑");
-            bottomright_next.setBackgroundResource(R.mipmap.unbund);
-        }
+//        }
+//        else {
+//            bottomright_next.setText(R.string.unbund);
+//            bottomright_next.setBackgroundResource(R.mipmap.unbund);
+//        }
     }
     private void initUI() {
 
@@ -178,9 +180,12 @@ public class BundTalentDeviceFragment extends BaseBleConnetFragment {
     }
     private void sendButtonEvent(Button tv,int event){
         if(tv.getText().toString().equals(getResources().getString(R.string.unbund))) {
-            showNotifyDialog(event);
+//            showNotifyDialog(event);
         }else if(tv.getText().toString().equals(getResources().getString(R.string.unbund_success))) {
             bundDevice(event);
+//            tv.setText(getResources().getString(R.string.unbund));
+//            tv.setBackgroundResource(R.mipmap.unbund);
+//            tv.setVisibility(View.VISIBLE);
         }
     }
     private Handler mHandler = new Handler() {
@@ -199,6 +204,7 @@ public class BundTalentDeviceFragment extends BaseBleConnetFragment {
     };
 
     private void unBundDevice(Button tvNext,int state) {
+        if(VictonBaseApplication.getInstance().usbService.receviceUsb==null) return;
         tvNext.setText("点击绑定");
         tvNext.setBackgroundResource(R.mipmap.b_btn);
         Logger.e(TAG,"正在解绑。。。"+state);
@@ -225,6 +231,7 @@ public class BundTalentDeviceFragment extends BaseBleConnetFragment {
 
     }
     private void bundDevice(int states) {
+        if(VictonBaseApplication.getInstance().usbService.receviceUsb==null) return;
         showDialog("开始配对模块。。。",false);
         state = states;
         switch (states) {
@@ -255,6 +262,7 @@ public class BundTalentDeviceFragment extends BaseBleConnetFragment {
            if (NotifyDialog.ACTION_BTN_STATE.equals(action)) {
                showDialog("正在配对模块。。。",false);
                isFirst = true;
+               VictonBaseApplication.getInstance().usbService.receviceUsb.sendData(DigitalTrans.hex2byte(Constants.CANCEL_PAIRED));
                bundDevice(state);
             }else if (NotifyDialog.ACTION_BTN_NEXT.equals(action)) {
                 Logger.e(TAG,"完成"+state);
@@ -319,9 +327,9 @@ public class BundTalentDeviceFragment extends BaseBleConnetFragment {
         it.putExtra(ConfigTablentDevice.NONE_NEXT,true);
         startActivity(it);
         loadDialog.stopCount(true);
-        currentBtn.setText(getResources().getString(R.string.unbund));
-        currentBtn.setBackgroundResource(R.mipmap.unbund);
-        currentBtn.setVisibility(View.VISIBLE);
+//        currentBtn.setText(getResources().getString(R.string.unbund));
+//        currentBtn.setBackgroundResource(R.mipmap.unbund);
+//        currentBtn.setVisibility(View.VISIBLE);
         //保存数据到本地
         deviceDaoUtils.update(state, Constants.MY_CAR_DEVICE,device.getTireType(true));
         currentTv.setText(str+"：\n"+device.getTireType(true));
@@ -400,14 +408,14 @@ public class BundTalentDeviceFragment extends BaseBleConnetFragment {
      */
     private void showNotifyDialog(final int state) {
 //        App.getInstance().speak(preStr+"与"+curStr+"进行对调，请选择确定或者取消");
-        new AlertDialog.Builder(getActivity()).setTitle("系统提示")//设置对话框标题
-                .setMessage("请确定传感器已经损坏或者无法正常工作情况下，才能使用解绑功能，否则解绑成功之后，无法进行绑定，" +
-                        "如果确定请点击确定按钮进行解绑，否则请选择取消")//设置显示的内容
-                .setPositiveButton("确定",new DialogInterface.OnClickListener() {//添加确定按钮
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {//确定按钮的响应事件
-                        // TODO Auto-generated method stub
-                        dialog.dismiss();
+//        new AlertDialog.Builder(getActivity()).setTitle("系统提示")//设置对话框标题
+//                .setMessage("请确定传感器已经损坏或者无法正常工作情况下，才能使用解绑功能，否则解绑成功之后，无法进行绑定，" +
+//                        "如果确定请点击确定按钮进行解绑，否则请选择取消")//设置显示的内容
+//                .setPositiveButton("确定",new DialogInterface.OnClickListener() {//添加确定按钮
+//                    @Override
+//                    public void onClick(DialogInterface dialog, int which) {//确定按钮的响应事件
+//                        // TODO Auto-generated method stub
+//                        dialog.dismiss();
                         switch (state) {
                             case 0:
                                 unBundDevice(topleft_next,leftF);
@@ -422,14 +430,14 @@ public class BundTalentDeviceFragment extends BaseBleConnetFragment {
                                 unBundDevice(bottomright_next,rightB);
                                 break;
                         }
-                    }
-                }).setNegativeButton("取消",new DialogInterface.OnClickListener() {//添加返回按钮
-            @Override
-            public void onClick(DialogInterface dialog, int which) {//响应事件
-                // TODO Auto-generated method stub
-                dialog.dismiss();
-            }
-        }).show();//在按键响应事件中显示此对话框
+//                    }
+//                }).setNegativeButton("取消",new DialogInterface.OnClickListener() {//添加返回按钮
+//            @Override
+//            public void onClick(DialogInterface dialog, int which) {//响应事件
+//                // TODO Auto-generated method stub
+//                dialog.dismiss();
+//            }
+//        }).show();//在按键响应事件中显示此对话框
     }
 
     @Override

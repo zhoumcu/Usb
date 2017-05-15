@@ -69,10 +69,10 @@ public class ManageDevice implements Serializable{
         this.leftFDevice = leftFDevice;
     }
 
-    public  String leftFDevice ;
-    public  String rightFDevice ;
-    public  String leftBDevice ;
-    public  String rightBDevice ;
+    public  String leftFDevice = "FF";
+    public  String rightFDevice = "FF";
+    public  String leftBDevice = "FF";
+    public  String rightBDevice = "FF";
 
 
     public  String[] blueDeviceTable = {getLeftFDevice(),getRightFDevice(),getLeftBDevice(),getRightBDevice()};

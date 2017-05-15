@@ -28,6 +28,7 @@ import com.victon.tpms.base.db.entity.Device;
 import com.victon.tpms.base.module.main.NotificationReceiver;
 import com.victon.tpms.common.helper.DataHelper;
 import com.victon.tpms.common.utils.Constants;
+import com.victon.tpms.common.utils.DigitalTrans;
 import com.victon.tpms.common.utils.Logger;
 import com.victon.tpms.common.utils.SharedPreferences;
 import com.victon.tpms.common.view.BleData;
@@ -70,7 +71,7 @@ public class UsbComService extends Service{
     private UsbDevice mUsbDevice;
     private PendingIntent mPermissionIntent;
 
-    public ReceviceUsbDataThread receviceUsb;
+    public ReceviceUsbDataThread receviceUsb = null;
     private final BroadcastReceiver mUsbReceiver = new BroadcastReceiver() {
 
         public void onReceive(Context context, Intent intent) {
@@ -91,6 +92,7 @@ public class UsbComService extends Service{
                                 // 获取USB通讯的读写端点
                                 receviceUsb = new ReceviceUsbDataThread(UsbComService.this,mDeviceConnection,mInterface);
                                 receviceUsb.start();
+                                receviceUsb.sendData(DigitalTrans.hex2byte(Constants.CHECK_IS_PARIED));
 //                                getEndpoint(mDeviceConnection, mInterface);
 //                                sendMsgForUsb(new byte[]{1, 66, 67, 68});
                             } else {

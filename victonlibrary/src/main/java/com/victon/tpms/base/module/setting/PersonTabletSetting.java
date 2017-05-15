@@ -77,7 +77,6 @@ public class PersonTabletSetting extends BaseActionBarActivity implements View.O
         tvTemp.setOnClickListener(this);
         tvLandPort.setOnClickListener(this);
         initSeekBar();
-
     }
 
 

@@ -271,7 +271,7 @@ public class DigitalTrans {
     public static int parseToInt(String s, int defaultInt) {
         int i = 0;
         try {
-            i = Integer.parseInt(s);
+            i = Integer.parseInt(s,16);
         } catch (NumberFormatException ex) {
             i = defaultInt;
         }
