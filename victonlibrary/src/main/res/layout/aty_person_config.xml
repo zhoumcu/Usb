@@ -251,7 +251,7 @@
             style="@style/line"
             android:layout_width="363dp"
             android:layout_height="wrap_content"
-            android:textColor="@color/blue"
+            android:textColor="@color/colorPrimary"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:text="许可证及隐私条款"
             android:id="@+id/access"

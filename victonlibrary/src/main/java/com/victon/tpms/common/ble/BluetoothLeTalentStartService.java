@@ -299,7 +299,7 @@ public class BluetoothLeTalentStartService extends Service {
 
     private void initNotification() {
         messageNotification = new Notification.Builder(this)
-            .setSmallIcon(R.mipmap.ic_logo)
+            .setSmallIcon(R.drawable.ic_logo)
             .setTicker("小安科技:" + "您有新短消息，请注意查收！")
             .setContentTitle("小安胎压监测系统")
             .setContentText("轮胎异常,请及时处理！")

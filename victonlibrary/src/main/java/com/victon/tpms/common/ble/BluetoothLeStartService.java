@@ -314,7 +314,7 @@ public class BluetoothLeStartService extends Service {
         deviceDetails = VictonBaseApplication.getDeviceDao().get(SharedPreferences.getInstance().getInt(Constants.LAST_ID, 0));
         // 初始化
         messageNotification = new Notification.Builder(this)
-                .setSmallIcon(R.mipmap.ic_logo)
+                .setSmallIcon(R.drawable.ic_logo)
                 .setTicker("小安科技:" + "您有新短消息，请注意查收！")
                 .setContentTitle("小安胎压监测系统")
                 .setContentText("轮胎异常,请及时处理！")
@@ -1061,8 +1061,7 @@ public class BluetoothLeStartService extends Service {
         BleData bleData = new BleData();
         Logger.e(DigitalTrans.byte2hex(data));
         if(data==null) return;
-        if(isNotify&&data.length==4)
-        {
+        if(isNotify&&data.length==4) {
             press = ((float)DigitalTrans.byteToAlgorism(data[1])*160)/51/100;
             voltage = ((float)(DigitalTrans.byteToAlgorism(data[3])-31)*20/21+160)/100;
             temp = DigitalTrans.byteToAlgorism(data[2])-50;
@@ -1105,7 +1104,7 @@ public class BluetoothLeStartService extends Service {
 
         bleData.setTemp (temp1);
         bleData.setPress(Float.valueOf(df.format(press)));
-        bleData.setStatus(state);
+        bleData.setStatus((byte) state);
         bleData.setVoltage(voltage);
 //        handleException(bleData,"轮胎状态异常！");
 //        showDataForUI(device.getAddress(),bleData);

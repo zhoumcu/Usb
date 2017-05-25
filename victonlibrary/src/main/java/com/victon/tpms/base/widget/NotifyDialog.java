@@ -48,7 +48,7 @@ public class NotifyDialog extends BaseActivity implements View.OnClickListener {
             tvNotify.setText("完成配置，请点击完成，进行下一个配置");
         } else {
             tvNotify.setText("配置超时，请点击重试按钮进行重新配置;如果多次配置均已无法配置，请点击跳过,进行配置下一个，" +
-                    "之后在解绑/绑定功能中进行绑定即可");
+                    "之后在绑定功能中进行绑定即可");
         }
         SharedPreferences.getInstance().putBoolean("isAppOnForeground",false);
         registerReceiver(mGattUpdateReceiver, makeGattUpdateIntentFilter());

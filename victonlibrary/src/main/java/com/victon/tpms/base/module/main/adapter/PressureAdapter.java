@@ -1,20 +1,24 @@
 package com.victon.tpms.base.module.main.adapter;
 
+import android.app.Activity;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AbsListView;
 import android.widget.BaseAdapter;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ListAdapter;
 import android.widget.TextView;
 
 import com.victon.tpms.R;
-import com.victon.tpms.common.view.BleData;
+import com.victon.tpms.common.utils.CommonUtils;
 import com.victon.tpms.common.utils.Constants;
 import com.victon.tpms.common.utils.Logger;
 import com.victon.tpms.common.utils.SharedPreferences;
+import com.victon.tpms.common.view.BleData;
 
 import java.util.List;
 import java.util.Map;
@@ -24,18 +28,22 @@ import java.util.Map;
  */
 public class PressureAdapter extends BaseAdapter {
 
+    private static final int ROW_NUMBER = 2;
+    private GridView mGv;
     private Map<Integer, BleData> mapList;
     private List<BleData> clist;
     private Context mContext;
 
-    public PressureAdapter(Context context, List<BleData> clist) {
+    public PressureAdapter(Context context, GridView gv, List<BleData> clist) {
         this.mContext = context;
         this.clist = clist;
+        this.mGv = gv;
     }
 
-    public PressureAdapter(Context context, Map<Integer, BleData> mapList) {
+    public PressureAdapter(Context context,GridView gv, Map<Integer, BleData> mapList) {
         this.mContext = context;
         this.mapList = mapList;
+        this.mGv = gv;
         Logger.e(mapList.size()+"...............");
     }
 
@@ -64,6 +72,11 @@ public class PressureAdapter extends BaseAdapter {
         } else {
             holder = (ViewHolder) convertView.getTag();
         }
+        //高度计算
+        AbsListView.LayoutParams param = new AbsListView.LayoutParams(
+                android.view.ViewGroup.LayoutParams.FILL_PARENT,
+                mGv.getHeight()/ROW_NUMBER);
+        convertView.setLayoutParams(param);
         if(mapList.get(position)==null) return convertView;
         holder.tvPreesure.setText(mapList.get(position).getStringPress());
         holder.tvTemp.setText(mapList.get(position).getTemp()+"");
@@ -162,6 +175,38 @@ public class PressureAdapter extends BaseAdapter {
             imgWarm.setImageDrawable(null);
         }
         Logger.e("更新item数据："+index);
+    }
+    public void setListViewHeightBasedOnChildren(Activity activity,GridView listView) {
+        // 获取listview的adapter
+        ListAdapter listAdapter = listView.getAdapter();
+        if (listAdapter == null) {
+            return;
+        }
+        // 固定列宽，有多少列
+        int col = 4;// listView.getNumColumns();
+        int totalHeight = 0;
+        int itemHeight = CommonUtils.getScreenHeight(activity)/2;
+        // i每次加4，相当于listAdapter.getCount()小于等于4时 循环一次，计算一次item的高度，
+        // listAdapter.getCount()小于等于8时计算两次高度相加
+        for (int i = 0; i < listAdapter.getCount(); i += col) {
+            // 获取listview的每一个item
+            View listItem = listAdapter.getView(i, null, listView);
+            listItem.measure(0, 0);
+//            listItem.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,itemHeight));
+            // 获取item的高度和
+            totalHeight += listItem.getMeasuredHeight();
+        }
+
+        // 获取listview的布局参数
+        ViewGroup.LayoutParams params = listView.getLayoutParams();
+        // 设置高度
+        params.height = itemHeight*2;
+        // 设置margin
+        ((ViewGroup.MarginLayoutParams) params).setMargins(10, 10, 10, 10);
+        // 设置参数
+        listView.setLayoutParams(params);
+
+        notifyDataSetChanged();
     }
 
     public void updateItem(Map<Integer, BleData> bleDataMap) {

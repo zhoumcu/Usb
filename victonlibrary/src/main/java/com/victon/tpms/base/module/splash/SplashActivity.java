@@ -6,10 +6,10 @@ import android.widget.ImageView;
 
 import com.victon.tpms.R;
 import com.victon.tpms.base.module.main.activity.MainForServiceActivity;
-import com.victon.tpms.common.view.activity.BaseFragmentActivity;
 import com.victon.tpms.common.utils.Constants;
 import com.victon.tpms.common.utils.SharedPreferences;
 import com.victon.tpms.common.utils.SoundPlayUtils;
+import com.victon.tpms.common.view.activity.BaseFragmentActivity;
 
 /**
  * Created by tiansj on 15/7/29.

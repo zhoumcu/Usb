@@ -15,12 +15,12 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:maxWidth="120dp"
+            android:maxWidth="200dp"
             android:maxLines="3"
             android:textAppearance="?android:attr/textAppearanceSmall"
             android:text=""
             android:textColor="@color/errored"
-            android:textSize="30sp"
+            android:textSize="@dimen/notice_size"
             android:id="@+id/tv_notes"
             android:layout_alignParentTop="true"
             android:layout_toEndOf="@+id/tv_preesure"
@@ -29,7 +29,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="-"
-            android:textSize="50sp"
+            android:textSize="@dimen/press_size_kpa"
             android:id="@+id/preesureunit"
             android:layout_alignBottom="@+id/tv_preesure"
             android:layout_toEndOf="@+id/tv_preesure" />
@@ -39,7 +39,7 @@
             android:layout_height="wrap_content"
             android:text="-.-"
             android:padding="5dp"
-            android:textSize="100sp"
+            android:textSize="@dimen/press_size"
             android:textStyle="bold"
             android:id="@+id/tv_preesure"
             android:textColor = "@color/blue_night"
@@ -73,14 +73,14 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="-"
-                android:textSize="50sp"
+                android:textSize="@dimen/temp_size"
                 android:id="@+id/tv_temp" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="-"
-                android:textSize="40sp"
+                android:textSize="@dimen/unit_size"
                 android:id="@+id/tempunit"
                 android:layout_alignBottom="@+id/tv_temp"
                 android:layout_toEndOf="@+id/tv_temp" />

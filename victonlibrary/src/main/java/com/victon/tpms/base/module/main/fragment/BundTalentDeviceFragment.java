@@ -11,6 +11,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.victon.tpms.R;
@@ -24,13 +25,14 @@ import com.victon.tpms.common.usb.UsbData;
 import com.victon.tpms.common.utils.Constants;
 import com.victon.tpms.common.utils.DigitalTrans;
 import com.victon.tpms.common.utils.Logger;
+import com.victon.tpms.common.utils.SoundPlayUtils;
 import com.victon.tpms.common.view.frame.BaseBleConnetFragment;
 import com.victon.tpms.entity.ManageDevice;
 
 /**
  * Created by Administrator on 2016/6/6.
  */
-public class BundTalentDeviceFragment extends BaseBleConnetFragment {
+public class BundTalentDeviceFragment extends BaseBleConnetFragment implements View.OnClickListener {
 
     private final static String TAG = BundTalentDeviceFragment.class.getSimpleName();
 
@@ -135,7 +137,10 @@ public class BundTalentDeviceFragment extends BaseBleConnetFragment {
 //        }
     }
     private void initUI() {
-
+        ImageView back = (ImageView) getView().findViewById(R.id.back);
+        ImageView setting = (ImageView)getView().findViewById(R.id.img_set);
+        setting.setVisibility(View.GONE);
+        back.setOnClickListener(this);
         tv_note_left_from = (TextView)getView(). findViewById(R.id.tv_note_left_from);
         tv_note_right_from = (TextView) getView().findViewById(R.id.tv_note_right_from);
         tv_note_left_back = (TextView) getView().findViewById(R.id.tv_note_left_back);
@@ -265,7 +270,9 @@ public class BundTalentDeviceFragment extends BaseBleConnetFragment {
                VictonBaseApplication.getInstance().usbService.receviceUsb.sendData(DigitalTrans.hex2byte(Constants.CANCEL_PAIRED));
                bundDevice(state);
             }else if (NotifyDialog.ACTION_BTN_NEXT.equals(action)) {
-                Logger.e(TAG,"完成"+state);
+               Logger.e(TAG,"完成"+state);
+               VictonBaseApplication.getInstance().usbService.receviceUsb.sendData(DigitalTrans.hex2byte(Constants.CANCEL_PAIRED));
+               isFirst = true;
             }
         }
     };
@@ -348,13 +355,13 @@ public class BundTalentDeviceFragment extends BaseBleConnetFragment {
                 break;
         }
         state = none;
-        isFirst = true;
+        SoundPlayUtils.play(2);
     }
     private void showDialog(String str,boolean isConnect) {
         if(!loadDialog.isShowing()) {
             loadDialog.setText(str);
             loadDialog.show();
-            loadDialog.setCountNum(30);
+            loadDialog.setCountNum(120);
             loadDialog.startCount(new LoadingDialog.OnListenerCallBack() {
                 @Override
                 public void onListenerCount() {
@@ -362,7 +369,7 @@ public class BundTalentDeviceFragment extends BaseBleConnetFragment {
                 }
             });
         }else{
-            loadDialog.reStartCount(str,30);
+            loadDialog.reStartCount(str,120);
         }
     }
     private void showDialog(String str) {
@@ -385,12 +392,14 @@ public class BundTalentDeviceFragment extends BaseBleConnetFragment {
 
     @Override
     public void broadcastUpdate(String action, UsbData gatt) {
-        if(!isBundBle(gatt)) {
-            bleIsFind(gatt);
-            Logger.d(TAG,"收到数据类型："+gatt.getTireType());
-        }else{
-            Logger.d(TAG,"已配对数据类型："+gatt.getTireType());
-        }
+        bleIsFind(gatt);
+        Logger.d(TAG,"收到数据类型："+gatt.getTireType());
+//        if(!isBundBle(gatt)) {
+//            bleIsFind(gatt);
+//            Logger.d(TAG,"收到数据类型："+gatt.getTireType());
+//        }else{
+//            Logger.d(TAG,"已配对数据类型："+gatt.getTireType());
+//        }
     }
     private boolean isBundBle(UsbData device) {
         if(device.getTireType(true).equals(manageDevice.getLeftFDevice()))
@@ -443,5 +452,12 @@ public class BundTalentDeviceFragment extends BaseBleConnetFragment {
     @Override
     public void onDestroyView() {
         super.onDestroyView();
+    }
+
+    @Override
+    public void onClick(View view) {
+        if(view.getId()==R.id.back){
+            getFragmentManager().popBackStack();
+        }
     }
 }

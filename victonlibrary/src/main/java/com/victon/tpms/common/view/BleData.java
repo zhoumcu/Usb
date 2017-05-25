@@ -10,7 +10,7 @@ public class BleData {
     public double sensorLow = 0;
     public double leakage = 0;
     public double leakageQucik = 0;
-    private int status;
+    private byte status;
     private float voltage;
     private String deviceAddress;
     private int viewPosition;
@@ -87,11 +87,11 @@ public class BleData {
         this.temp = temp;
     }
 
-    public void setStatus(int status) {
+    public void setStatus(byte status) {
         this.status = status;
     }
 
-    public int getStatus() {
+    public byte getStatus() {
         return status;
     }
 

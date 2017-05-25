@@ -439,4 +439,13 @@ public class DigitalTrans {
         }
         return ret;
     }
+    /**
+     * 将int类型的数据转换为byte数组
+     * @param n int数据
+     * @return 生成的byte数组
+     */
+    public static byte[] intToBytes(int n){
+        String s = String.valueOf(n);
+        return s.getBytes();
+    }
 }

@@ -53,7 +53,8 @@ public class DataHelper {
 
     public static BleData getData(byte[] data){
         float press = 0, temp =0;
-        int temp1 = 0,state = 0,rssi = 0;
+        int temp1 = 0,rssi = 0;
+        byte state = 0;
         String pressStr = "";
         DecimalFormat df = new DecimalFormat("######0.0");
         BleData bleData = new BleData();
@@ -63,7 +64,8 @@ public class DataHelper {
             Logger.d(TAG,"press"+parsePress(data[1]));
             press = parsePress(data[1]);
             temp = (float)(DigitalTrans.byteToAlgorism(data[2])-40);
-            state = DigitalTrans.byteToBin0x0F(data[3]);
+//            state = DigitalTrans.byteToBin0x0F(data[3]);
+            state = data[3];
             press = Math.round(press*10)*0.1f;
             if(SharedPreferences.getInstance().getString(Constants.PRESSUER_DW, "Bar").equals("Bar")) {
                 pressStr = df.format(press);
@@ -82,7 +84,7 @@ public class DataHelper {
         }else if(data.length==9) {
             press = ((float)DigitalTrans.byteToAlgorism(data[2])*160)/51/100;
             temp = (float)(DigitalTrans.byteToAlgorism(data[3])-50);
-            state = DigitalTrans.byteToBin0x0F(data[1]);
+//            state = DigitalTrans.byteToBin0x0F(data[1]);
             press = Math.round(press*10)*0.1f;
             if(SharedPreferences.getInstance().getString(Constants.PRESSUER_DW, "Bar").equals("Bar")) {
                 pressStr = df.format(press);
@@ -132,9 +134,11 @@ public class DataHelper {
         buffer.append(date.getTemp() > maxTemp ? "高温" + " " : "");
         ManageDevice.status[] statusData = ManageDevice.status.values();
         //状态检测
-        if(date.getStatus()==1||date.getStatus()==2) {
-            buffer.append(statusData[date.getStatus()] + " ");
-        }else if(date.getStatus()==80){
+        if((date.getStatus()&0x01)==(byte)0x01) {
+            buffer.append(statusData[1] + " ");
+        }else if((date.getStatus()&0x02)==(byte)0x02){
+            buffer.append(statusData[2] + " ");
+        } else if((date.getStatus()&0x80)==(byte)0x80){
             buffer.append(statusData[8] + " ");
         }
 //        else if(date.getStatus()==40){
@@ -145,7 +149,7 @@ public class DataHelper {
 //            buffer.append(statusData[5] + " ");
 //        }
 
-        if (buffer.toString().contains("快漏")||date.getPress() > maxPress || date.getPress() < minPress || date.getTemp() >= maxTemp ? true: false) {
+        if (buffer.toString().contains("快漏")||buffer.toString().contains("慢漏")||date.getPress() > maxPress || date.getPress() < minPress || date.getTemp() > maxTemp ? true: false) {
             //高压
             date.setIsError(true);
             date.setException(true);

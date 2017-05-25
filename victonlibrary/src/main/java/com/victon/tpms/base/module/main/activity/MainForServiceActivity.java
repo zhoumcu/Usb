@@ -16,6 +16,7 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
 
 import com.victon.tpms.R;
 import com.victon.tpms.base.VictonBaseApplication;
@@ -82,8 +83,10 @@ public class MainForServiceActivity extends BaseActionBarActivity implements Vie
         currIndex = 0;
         fragmentTags = new ArrayList<>(Arrays.asList("HomeFragment", "ImFragment", "InterestFragment", "MemberFragment"));
         background = (FrameLayout)findViewById(R.id.bg_ground);
+        ImageView back = (ImageView) findViewById(R.id.back);
+        back.setOnClickListener(this);
+        back.setVisibility(View.GONE);
         try{
-            findViewById(R.id.back).setOnClickListener(this);
             findViewById(R.id.img_set).setOnClickListener(this);
         }catch (NullPointerException e) { }
     }
@@ -141,28 +144,28 @@ public class MainForServiceActivity extends BaseActionBarActivity implements Vie
                             for (int i=0;i<device.getData().length;i++){
                                 Logger.i(TAG,"从USB上接收到广播0x06："+DigitalTrans.byteToString(device.getData()[i]));
                             }
-                            if(device.getData()[0]!=(byte)0xFF&&device.getData()[1]!=(byte)0xFF){
+                            if(device.getData()[0]!=(byte)0xFF||device.getData()[1]!=(byte)0xFF){
                                 manageDevice.setLeftFDevice("00");
                                 VictonBaseApplication.getDeviceDao().update(0, Constants.MY_CAR_DEVICE,"00");
                             }else {
                                 manageDevice.setLeftFDevice("FF");
                                 VictonBaseApplication.getDeviceDao().update(0, Constants.MY_CAR_DEVICE,"FF");
                             }
-                            if(device.getData()[2]!=(byte)0xFF&&device.getData()[3]!=(byte)0xFF){
+                            if(device.getData()[2]!=(byte)0xFF||device.getData()[3]!=(byte)0xFF){
                                 manageDevice.setRightFDevice("01");
                                 VictonBaseApplication.getDeviceDao().update(1, Constants.MY_CAR_DEVICE,"01");
                             }else {
                                 manageDevice.setRightFDevice("FF");
                                 VictonBaseApplication.getDeviceDao().update(1, Constants.MY_CAR_DEVICE,"FF");
                             }
-                            if(device.getData()[4]!=(byte)0xFF&&device.getData()[5]!=(byte)0xFF){
+                            if(device.getData()[4]!=(byte)0xFF||device.getData()[5]!=(byte)0xFF){
                                 manageDevice.setLeftBDevice("02");
                                 VictonBaseApplication.getDeviceDao().update(2, Constants.MY_CAR_DEVICE,"02");
                             }else {
                                 manageDevice.setLeftBDevice("FF");
                                 VictonBaseApplication.getDeviceDao().update(2, Constants.MY_CAR_DEVICE,"FF");
                             }
-                            if(device.getData()[6]!=(byte)0xFF&&device.getData()[7]!=(byte)0xFF){
+                            if(device.getData()[6]!=(byte)0xFF||device.getData()[7]!=(byte)0xFF){
                                 manageDevice.setRightBDevice("03");
                                 VictonBaseApplication.getDeviceDao().update(3, Constants.MY_CAR_DEVICE,"03");
                             }else {
@@ -198,6 +201,7 @@ public class MainForServiceActivity extends BaseActionBarActivity implements Vie
         if (fragment.isAdded()) {
             fragmentTransaction.show(fragment);
         } else {
+            fragmentTransaction.addToBackStack(null);
             fragmentTransaction.add(R.id.fragment_container, fragment, fragmentTags.get(currIndex));
         }
         fragmentTransaction.commitAllowingStateLoss();
@@ -288,7 +292,8 @@ public class MainForServiceActivity extends BaseActionBarActivity implements Vie
     private void exit() {
         if(currIndex==0) {
             isQuiting = true;
-            finish();
+//            finish();
+            moveTaskToBack(true);// 点击菜单键即转入后台，vivo X6Plus Android5.1也适用
         }else {
             switchFragment(0);
         }

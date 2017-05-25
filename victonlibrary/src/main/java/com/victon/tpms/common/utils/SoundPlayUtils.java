@@ -23,6 +23,7 @@ public class SoundPlayUtils {
     static Context mContext;
     private static Handler mHandler = new Handler();
     private static Vector<Integer> mKillSoundQueue = new Vector<Integer>();
+    private static Vector<Integer> mStopSoundQueue = new Vector<Integer>();
     private static boolean isWait = false;
     private static int countNum;
     /**
@@ -68,6 +69,23 @@ public class SoundPlayUtils {
         if(!sortListData(mKillSoundQueue,soundID)){
             mKillSoundQueue.add(soundID);
         }
+    }
+    /**
+     * 播放声音
+     *
+     * @param soundID
+     */
+    public static void stop(int soundID) {
+        isWait = false;
+        for (int i=0;i<mKillSoundQueue.size();i++){
+            if(soundID !=i){
+                mSoundPlayer.stop(i);
+                mKillSoundQueue.remove(i);
+                mStopSoundQueue.add(i);
+            }
+        }
+        mSoundPlayer.play(soundID, 1, 1, 0, 0, 1);
+        mKillSoundQueue = mStopSoundQueue;
     }
 
     private static boolean sortListData(Vector<Integer> mKillSoundQueue, int soundID) {

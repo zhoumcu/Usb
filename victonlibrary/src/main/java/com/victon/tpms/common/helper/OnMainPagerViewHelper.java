@@ -31,8 +31,9 @@ public class OnMainPagerViewHelper extends ViewHelper{
         View view = LayoutInflater.from(context).inflate(R.layout.view_grid_pressuer,container,false);
         gridView = (GridView) view.findViewById(R.id.gridView);
         if(list.size()>0){
-            adpter = new PressureAdapter(context,list);
+            adpter = new PressureAdapter(context,gridView,list);
             gridView.setAdapter(adpter);
+//            adpter.setListViewHeightBasedOnChildren((Activity) context,gridView);
         }
         return view;
     }
@@ -42,8 +43,9 @@ public class OnMainPagerViewHelper extends ViewHelper{
         gridView = (GridView) view.findViewById(R.id.gridView);
         mapList1 = mapList;
         if(mapList.size()>0){
-            adpter = new PressureAdapter(context,mapList);
+            adpter = new PressureAdapter(context,gridView,mapList);
             gridView.setAdapter(adpter);
+//            adpter.setListViewHeightBasedOnChildren((Activity) context,gridView);
         }
         return view;
     }

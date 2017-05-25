@@ -8,6 +8,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.IBinder;
+import android.text.TextUtils;
 
 import com.umeng.analytics.MobclickAgent;
 import com.victon.tpms.base.db.dao.DeviceDao;
@@ -49,8 +50,10 @@ public class VictonBaseApplication extends Application{
 //        String device_token = UmengRegistrar.getRegistrationId(this);
 //        Logger.i("UmengRegistrar device token:"+device_token);
         SoundPlayUtils.init(this);
-        Intent intent = new Intent(this, UsbComService.class);
-        bindService(intent,mServiceConnection, Context.BIND_AUTO_CREATE);
+        if(!isServiceRunning(this)){
+            Intent intent = new Intent(this, UsbComService.class);
+            bindService(intent,mServiceConnection, Context.BIND_AUTO_CREATE);
+        }
     }
     public UsbComService usbService;
 
@@ -65,6 +68,39 @@ public class VictonBaseApplication extends Application{
             usbService = null;
         }
     };
+
+    /**
+     * 用来判断服务是否运行.
+     * @param mContext
+     * @param className 判断的服务名字
+     * @return true 在运行 false 不在运行
+     */
+    public boolean isServiceRunning(Context mContext) {
+        boolean isRunning = false;
+        ActivityManager activityManager = (ActivityManager)
+                mContext.getSystemService(Context.ACTIVITY_SERVICE);
+        List<ActivityManager.RunningServiceInfo> serviceList
+                = activityManager.getRunningServices(30);
+        if (!(serviceList.size()>0)) {
+            return false;
+        }
+        for (int i=0; i<serviceList.size(); i++) {
+            if (serviceList.get(i).service.getClassName().equals(getPackageName()) == true) {
+                isRunning = true;
+                break;
+            }
+        }
+        return isRunning;
+    }
+    public boolean isRunningForeground (Context context) {
+        ActivityManager am = (ActivityManager)context.getSystemService(Context.ACTIVITY_SERVICE);
+        ComponentName cn = am.getRunningTasks(1).get(0).topActivity;
+        String currentPackageName = cn.getPackageName();
+        if(!TextUtils.isEmpty(currentPackageName) && currentPackageName.equals(getPackageName())) {
+            return true ;
+        }
+        return false ;
+    }
     public static String getCurProcessName(Context context) {
         int pid = android.os.Process.myPid();
         ActivityManager activityManager = (ActivityManager) context
