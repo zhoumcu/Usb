@@ -22,7 +22,7 @@ import java.util.List;
 /**
  * Created by bob on 2015/1/30.
  */
-public class VictonBaseApplication extends Application{
+public class VictonBaseApplication extends Application implements Thread.UncaughtExceptionHandler{
 
     public static VictonBaseApplication app;
     public static DeviceDao getDeviceDao() {
@@ -58,6 +58,8 @@ public class VictonBaseApplication extends Application{
 //            Intent intent1 = new Intent(this, HeartService.class);
 //            startService(intent1);
 //        }
+        //设置Thread Exception Handler
+        Thread.setDefaultUncaughtExceptionHandler(this);
     }
 
 //    public UsbComService usbService;
@@ -160,5 +162,14 @@ public class VictonBaseApplication extends Application{
         } finally {
             //System.exit(0);
         }
+    }
+
+    @Override
+    public void uncaughtException(Thread thread, Throwable throwable) {
+        System.out.println("uncaughtException");
+        System.exit(0);
+        Intent intent = new Intent(this, MainForServiceActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(intent);
     }
 }
