@@ -1,8 +1,6 @@
 package com.victon.tpms.base.module.main.activity;
 
 import android.annotation.TargetApi;
-import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Build;
@@ -20,16 +18,15 @@ import android.widget.ImageView;
 
 import com.victon.tpms.R;
 import com.victon.tpms.base.VictonBaseApplication;
+import com.victon.tpms.base.db.entity.Device;
 import com.victon.tpms.base.module.main.fragment.BundTalentDeviceFragment;
 import com.victon.tpms.base.module.main.fragment.ChangeTablentDeviceFragment;
 import com.victon.tpms.base.module.main.fragment.MainFragment;
 import com.victon.tpms.base.module.setting.PersonTabletSetting;
 import com.victon.tpms.base.widget.PopupMeumWindow;
 import com.victon.tpms.common.usb.UsbComService;
-import com.victon.tpms.common.usb.UsbData;
 import com.victon.tpms.common.utils.CommonUtils;
 import com.victon.tpms.common.utils.Constants;
-import com.victon.tpms.common.utils.DigitalTrans;
 import com.victon.tpms.common.utils.Logger;
 import com.victon.tpms.common.utils.SharedPreferences;
 import com.victon.tpms.common.view.activity.BaseActionBarActivity;
@@ -37,6 +34,7 @@ import com.victon.tpms.entity.ManageDevice;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 
 @TargetApi(Build.VERSION_CODES.LOLLIPOP)
@@ -55,6 +53,9 @@ public class MainForServiceActivity extends BaseActionBarActivity implements Vie
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+//        if(VictonBaseApplication.getInstance().isRunningForeground(this)){
+//            return;
+//        }
         // 初始化Colorful
         changeThemeWithColorful();
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
@@ -62,12 +63,24 @@ public class MainForServiceActivity extends BaseActionBarActivity implements Vie
             setContentView(R.layout.de_activity_main);
         }catch (InflateException e) { }
         mContext =MainForServiceActivity.this;
+        VictonBaseApplication.getInstance().addActivity(this);
+
+        if(!VictonBaseApplication.getInstance().isServiceRunning(this,"com.victon.tpms.common.usb.UsbComService")){
+            Intent intent = new Intent(this, UsbComService.class);
+            intent.addFlags(1610612736);
+            startService(intent);
+            Logger.e("UsbComService"+"start service!");
+        }
+        if(!VictonBaseApplication.getInstance().isServiceRunning(this,"com.victon.tpms.common.usb.HeartService")){
+//            Intent intent1 = new Intent(this, HeartService.class);
+//            intent1.addFlags(1610612736);
+//            startService(intent1);
+        }
         initUI();
-        initConfig();
+//        initConfig();
         initData();
         showFragment();
     }
-
     /**
      * 切换主题
      */
@@ -95,11 +108,12 @@ public class MainForServiceActivity extends BaseActionBarActivity implements Vie
     public void onResume() {
         super.onResume();
         initData();
-    }
-
-    @Override
-    protected void onRestart() {
-        super.onRestart();
+//        if(!VictonBaseApplication.getInstance().isServiceRunning(this,"com.victon.tpms.common.usb.UsbComService")){
+//            Intent intent = new Intent(this, UsbComService.class);
+//            intent.addFlags(1610612736);
+//            startService(intent);
+//            Logger.e("UsbComService"+"start service!");
+//        }
     }
 
     private void initData() {
@@ -110,18 +124,18 @@ public class MainForServiceActivity extends BaseActionBarActivity implements Vie
 //        manageDevice.setLeftBDevice("02");
 //        manageDevice.setRightBDevice("03");
         //刷新数据库
-//        List<Device> deviceDetails = VictonBaseApplication.getDeviceDao().get(Constants.MY_CAR_DEVICE);
-//        if(deviceDetails.size()<=0) return;
-//        manageDevice.setLeftFDevice(deviceDetails.get(0).getLeft_FD());
-//        manageDevice.setRightFDevice(deviceDetails.get(0).getRight_FD());
-//        manageDevice.setLeftBDevice(deviceDetails.get(0).getLeft_BD());
-//        manageDevice.setRightBDevice(deviceDetails.get(0).getRight_BD());
-//        Logger.d(TAG,deviceDetails.get(0).getLeft_FD()+":"+deviceDetails.get(0).getRight_FD()
-//                +":"+deviceDetails.get(0).getLeft_BD()+":"+deviceDetails.get(0).getRight_BD());
+        List<Device> deviceDetails = VictonBaseApplication.getDeviceDao().get(Constants.MY_CAR_DEVICE);
+        if(deviceDetails.size()<=0) return;
+        manageDevice.setLeftFDevice(deviceDetails.get(0).getLeft_FD());
+        manageDevice.setRightFDevice(deviceDetails.get(0).getRight_FD());
+        manageDevice.setLeftBDevice(deviceDetails.get(0).getLeft_BD());
+        manageDevice.setRightBDevice(deviceDetails.get(0).getRight_BD());
+        Logger.d(TAG,deviceDetails.get(0).getLeft_FD()+":"+deviceDetails.get(0).getRight_FD()
+                +":"+deviceDetails.get(0).getLeft_BD()+":"+deviceDetails.get(0).getRight_BD());
     }
-    protected void initConfig() {
-        registerReceiver(mGattUpdateReceiver, makeGattUpdateIntentFilter());
-    }
+//    protected void initConfig() {
+//        registerReceiver(mGattUpdateReceiver, makeGattUpdateIntentFilter());
+//    }
     /** Handles various events fired by the Service.
      * ACTION_GATT_CONNECTED: connected to a GATT server.
      * ACTION_GATT_DISCONNECTED: disconnected from a GATT server.
@@ -129,55 +143,55 @@ public class MainForServiceActivity extends BaseActionBarActivity implements Vie
      * ACTION_DATA_AVAILABLE: received data from the device.
      * This can be a result of read or notification operations.
      **/
-    private final BroadcastReceiver mGattUpdateReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, final Intent intent) {
-            String action = intent.getAction();
-            if (UsbComService.SCAN_FOR_RESULT.equals(action)) {
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        UsbData device = (UsbData) intent.getSerializableExtra("SCAN_RECORD");
-                        if(device.getCommand()==(byte) 0x06){
-                            Logger.i(TAG,"从USB上接收到广播0x06：" +"命令类型"+ DigitalTrans.byteToString(device.getCommand())+
-                                    "内容："+DigitalTrans.Bytes2HexString(device.getData()));
-                            for (int i=0;i<device.getData().length;i++){
-                                Logger.i(TAG,"从USB上接收到广播0x06："+DigitalTrans.byteToString(device.getData()[i]));
-                            }
-                            if(device.getData()[0]!=(byte)0xFF||device.getData()[1]!=(byte)0xFF){
-                                manageDevice.setLeftFDevice("00");
-                                VictonBaseApplication.getDeviceDao().update(0, Constants.MY_CAR_DEVICE,"00");
-                            }else {
-                                manageDevice.setLeftFDevice("FF");
-                                VictonBaseApplication.getDeviceDao().update(0, Constants.MY_CAR_DEVICE,"FF");
-                            }
-                            if(device.getData()[2]!=(byte)0xFF||device.getData()[3]!=(byte)0xFF){
-                                manageDevice.setRightFDevice("01");
-                                VictonBaseApplication.getDeviceDao().update(1, Constants.MY_CAR_DEVICE,"01");
-                            }else {
-                                manageDevice.setRightFDevice("FF");
-                                VictonBaseApplication.getDeviceDao().update(1, Constants.MY_CAR_DEVICE,"FF");
-                            }
-                            if(device.getData()[4]!=(byte)0xFF||device.getData()[5]!=(byte)0xFF){
-                                manageDevice.setLeftBDevice("02");
-                                VictonBaseApplication.getDeviceDao().update(2, Constants.MY_CAR_DEVICE,"02");
-                            }else {
-                                manageDevice.setLeftBDevice("FF");
-                                VictonBaseApplication.getDeviceDao().update(2, Constants.MY_CAR_DEVICE,"FF");
-                            }
-                            if(device.getData()[6]!=(byte)0xFF||device.getData()[7]!=(byte)0xFF){
-                                manageDevice.setRightBDevice("03");
-                                VictonBaseApplication.getDeviceDao().update(3, Constants.MY_CAR_DEVICE,"03");
-                            }else {
-                                manageDevice.setRightBDevice("FF");
-                                VictonBaseApplication.getDeviceDao().update(3, Constants.MY_CAR_DEVICE,"FF");
-                            }
-                        }
-                    }
-                });
-            }
-        }
-    };
+//    private final BroadcastReceiver mGattUpdateReceiver = new BroadcastReceiver() {
+//        @Override
+//        public void onReceive(Context context, final Intent intent) {
+//            String action = intent.getAction();
+//            if (UsbComService.SCAN_FOR_RESULT.equals(action)) {
+//                runOnUiThread(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        UsbData device = (UsbData) intent.getSerializableExtra("SCAN_RECORD");
+//                        if(device.getCommand()==(byte) 0x06){
+//                            Logger.i(TAG,"从USB上接收到广播0x06：" +"命令类型"+ DigitalTrans.byteToString(device.getCommand())+
+//                                    "内容："+DigitalTrans.Bytes2HexString(device.getData()));
+//                            for (int i=0;i<device.getData().length;i++){
+//                                Logger.i(TAG,"从USB上接收到广播0x06："+DigitalTrans.byteToString(device.getData()[i]));
+//                            }
+//                            if(device.getData()[0]!=(byte)0xFF||device.getData()[1]!=(byte)0xFF){
+//                                manageDevice.setLeftFDevice("00");
+//                                VictonBaseApplication.getDeviceDao().update(0, Constants.MY_CAR_DEVICE,"00");
+//                            }else {
+//                                manageDevice.setLeftFDevice("FF");
+//                                VictonBaseApplication.getDeviceDao().update(0, Constants.MY_CAR_DEVICE,"FF");
+//                            }
+//                            if(device.getData()[2]!=(byte)0xFF||device.getData()[3]!=(byte)0xFF){
+//                                manageDevice.setRightFDevice("01");
+//                                VictonBaseApplication.getDeviceDao().update(1, Constants.MY_CAR_DEVICE,"01");
+//                            }else {
+//                                manageDevice.setRightFDevice("FF");
+//                                VictonBaseApplication.getDeviceDao().update(1, Constants.MY_CAR_DEVICE,"FF");
+//                            }
+//                            if(device.getData()[4]!=(byte)0xFF||device.getData()[5]!=(byte)0xFF){
+//                                manageDevice.setLeftBDevice("02");
+//                                VictonBaseApplication.getDeviceDao().update(2, Constants.MY_CAR_DEVICE,"02");
+//                            }else {
+//                                manageDevice.setLeftBDevice("FF");
+//                                VictonBaseApplication.getDeviceDao().update(2, Constants.MY_CAR_DEVICE,"FF");
+//                            }
+//                            if(device.getData()[6]!=(byte)0xFF||device.getData()[7]!=(byte)0xFF){
+//                                manageDevice.setRightBDevice("03");
+//                                VictonBaseApplication.getDeviceDao().update(3, Constants.MY_CAR_DEVICE,"03");
+//                            }else {
+//                                manageDevice.setRightBDevice("FF");
+//                                VictonBaseApplication.getDeviceDao().update(3, Constants.MY_CAR_DEVICE,"FF");
+//                            }
+//                        }
+//                    }
+//                });
+//            }
+//        }
+//    };
     private static IntentFilter makeGattUpdateIntentFilter() {
         final IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(UsbComService.SCAN_FOR_RESULT);
@@ -282,6 +296,7 @@ public class MainForServiceActivity extends BaseActionBarActivity implements Vie
     @Override
     protected void onDestroy() {
         super.onDestroy();
+//        unregisterReceiver(mGattUpdateReceiver);
         System.gc();
         Logger.i("MainActivity closed!!!");
     }
@@ -292,6 +307,8 @@ public class MainForServiceActivity extends BaseActionBarActivity implements Vie
     private void exit() {
         if(currIndex==0) {
             isQuiting = true;
+//            VictonBaseApplication.getInstance().exit();
+//            UsbComService.receviceUsb = null;
 //            finish();
             moveTaskToBack(true);// 点击菜单键即转入后台，vivo X6Plus Android5.1也适用
         }else {

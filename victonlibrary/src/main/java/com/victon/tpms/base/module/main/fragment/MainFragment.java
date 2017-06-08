@@ -45,13 +45,6 @@ public class MainFragment extends WictonBleBaseFragment {
     }
 
     @Override
-    public void onResume() {
-        super.onResume();
-//        Logger.e("onResume");
-//        OnMainPagerViewHelper.updatePressuserGrid();
-    }
-
-    @Override
     protected void onReceviceDateSucess(UsbData device, int positionOfView, BleData bleData) {
         OnMainPagerViewHelper.updatePressuserGridItem(positionOfView,bleData);
     }

@@ -6,13 +6,20 @@ import android.hardware.usb.UsbDeviceConnection;
 import android.hardware.usb.UsbEndpoint;
 import android.hardware.usb.UsbInterface;
 import android.hardware.usb.UsbRequest;
+import android.text.TextUtils;
 import android.util.Log;
 
+import com.victon.tpms.base.VictonBaseApplication;
+import com.victon.tpms.base.module.main.activity.MainForServiceActivity;
+import com.victon.tpms.common.helper.DataHelper;
 import com.victon.tpms.common.utils.DigitalTrans;
 import com.victon.tpms.common.utils.Logger;
 import com.victon.tpms.common.utils.SharedPreferences;
+import com.victon.tpms.common.view.BleData;
 
 import java.nio.ByteBuffer;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import static android.content.ContentValues.TAG;
 
@@ -24,11 +31,13 @@ import static android.content.ContentValues.TAG;
 
 public class ReceviceUsbDataThread extends Thread {
 
+    private Timer timer;
     private Context context;
     private UsbDeviceConnection mDeviceConnection;
     private UsbEndpoint epOut;
     private UsbEndpoint epIn;
-    private boolean isRecevice;
+    public boolean isRecevice;
+    private boolean isSend;
 
     public ReceviceUsbDataThread(Context context,UsbDeviceConnection connection, UsbInterface intf) {
         this.context = context;
@@ -39,18 +48,26 @@ public class ReceviceUsbDataThread extends Thread {
         if (intf.getEndpoint(0) != null) {
             epIn = intf.getEndpoint(0);
         }
+
+        timer = new Timer();
+        timer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                isSend = false;
+            }
+        },1000,20000);
     }
 
     @Override
     public void run() {
         super.run();
+        UsbRequest usbRequest = new UsbRequest();
+        usbRequest.initialize(mDeviceConnection, epIn);
         while (!isRecevice){
             byte[] filebytes = null;
             int outMax = epOut.getMaxPacketSize();
             int inMax = epIn.getMaxPacketSize();
             ByteBuffer byteBuffer = ByteBuffer.allocate(inMax);
-            UsbRequest usbRequest = new UsbRequest();
-            usbRequest.initialize(mDeviceConnection, epIn);
             usbRequest.queue(byteBuffer, inMax);
             if(mDeviceConnection.requestWait() == usbRequest) {
                 filebytes = byteBuffer.array();
@@ -58,9 +75,11 @@ public class ReceviceUsbDataThread extends Thread {
                 parseData(filebytes);
             }
             try {
-                Thread.sleep(100);
+                Thread.sleep(50);
             } catch (InterruptedException e) {
                 e.printStackTrace();
+                usbRequest.cancel();
+                usbRequest.close();
             }
         }
     }
@@ -80,9 +99,6 @@ public class ReceviceUsbDataThread extends Thread {
         }
 
     }
-
-
-
     public void sendData(byte[] Sendbytes) {
         //byte[] bt ={1,66,67,68};
 //        byte[] Sendbytes = Arrays.copyOf(bt, bt.length);
@@ -141,13 +157,27 @@ public class ReceviceUsbDataThread extends Thread {
                 data[l-5] = filebytes[fromPos+l];
             }
             usbData.setData(data);
-            Log.i(TAG, "接收返回值:" + DigitalTrans.Bytes2HexString(data));
+            handleExp(data);
+
+            Logger.i(TAG, "接收返回值:" + DigitalTrans.Bytes2HexString(data));
 //            Logger.i("后台接收广播数据："+ SharedPreferences.getInstance().getBoolean("isAppOnForeground",false));
             broadcastUpdate(UsbComService.SCAN_FOR_RESULT, usbData);
             fromPos +=(lenght+3);
             if(fromPos>21) break;
         }
         return null;
+    }
+    private void handleExp(byte[] data) {
+        if(isSend) return;
+        isSend = true;
+        BleData bleData = DataHelper.getData(data);
+        if(!TextUtils.isEmpty(bleData.getErrorState())||bleData.getErrorState().length()>0){
+            if(!VictonBaseApplication.getInstance().isRunningForeground(context)){
+                Intent intent1 = new Intent(context,MainForServiceActivity.class);
+                intent1.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                context.startActivity(intent1);
+            }
+        }
     }
     private UsbData parseData1(byte[] filebytes){
         byte sumByte = 0x00;

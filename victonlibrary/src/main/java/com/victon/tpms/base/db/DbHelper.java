@@ -42,7 +42,7 @@ public class DbHelper {
         DB_DIR = null;
     }
     private DbHelper(Context context) {
-        if(context.getFilesDir()!=null||context!=null){
+        if(context.getFilesDir()!=null){
             DB_DIR = context.getFilesDir()+"/databases/";
         }else {
             DB_DIR = Environment.getExternalStorageDirectory().getAbsolutePath()+"/databases/";

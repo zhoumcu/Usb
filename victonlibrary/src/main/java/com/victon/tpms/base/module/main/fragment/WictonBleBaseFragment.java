@@ -14,6 +14,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 
+import com.victon.tpms.base.VictonBaseApplication;
 import com.victon.tpms.base.db.DbHelper;
 import com.victon.tpms.base.db.DbObervable;
 import com.victon.tpms.base.db.entity.RecordData;
@@ -150,6 +151,40 @@ public abstract class WictonBleBaseFragment extends BaseFragment{
                                 "内容："+DigitalTrans.Bytes2HexString(device.getData()));
                         if(device.getCommand()==(byte) 0x04){
                             bleStringToDouble(device);
+                        }else if(device.getCommand()==(byte) 0x06){
+                            Logger.i(TAG,"UsbComService从USB上接收到广播0x06：" +"命令类型"+ DigitalTrans.byteToString(device.getCommand())+
+                                    "内容："+DigitalTrans.Bytes2HexString(device.getData()));
+                            for (int i=0;i<device.getData().length;i++){
+                                Logger.i(TAG,"从USB上接收到广播0x06："+DigitalTrans.byteToString(device.getData()[i]));
+                            }
+                            if(device.getData()[0]!=(byte)0xFF||device.getData()[1]!=(byte)0xFF){
+                                defaultDevice.setLeftFDevice("00");
+                                VictonBaseApplication.getDeviceDao().update(0, Constants.MY_CAR_DEVICE,"00");
+                            }else {
+                                defaultDevice.setLeftFDevice("FF");
+                                VictonBaseApplication.getDeviceDao().update(0, Constants.MY_CAR_DEVICE,"FF");
+                            }
+                            if(device.getData()[2]!=(byte)0xFF||device.getData()[3]!=(byte)0xFF){
+                                defaultDevice.setRightFDevice("01");
+                                VictonBaseApplication.getDeviceDao().update(1, Constants.MY_CAR_DEVICE,"01");
+                            }else {
+                                defaultDevice.setRightFDevice("FF");
+                                VictonBaseApplication.getDeviceDao().update(1, Constants.MY_CAR_DEVICE,"FF");
+                            }
+                            if(device.getData()[4]!=(byte)0xFF||device.getData()[5]!=(byte)0xFF){
+                                defaultDevice.setLeftBDevice("02");
+                                VictonBaseApplication.getDeviceDao().update(2, Constants.MY_CAR_DEVICE,"02");
+                            }else {
+                                defaultDevice.setLeftBDevice("FF");
+                                VictonBaseApplication.getDeviceDao().update(2, Constants.MY_CAR_DEVICE,"FF");
+                            }
+                            if(device.getData()[6]!=(byte)0xFF||device.getData()[7]!=(byte)0xFF){
+                                defaultDevice.setRightBDevice("03");
+                                VictonBaseApplication.getDeviceDao().update(3, Constants.MY_CAR_DEVICE,"03");
+                            }else {
+                                defaultDevice.setRightBDevice("FF");
+                                VictonBaseApplication.getDeviceDao().update(3, Constants.MY_CAR_DEVICE,"FF");
+                            }
                         }
                     }
                 });
@@ -169,7 +204,8 @@ public abstract class WictonBleBaseFragment extends BaseFragment{
                     RecordData recordData = new RecordData();
                     recordData.setData(null);
                     recordData.setDeviceId(Constants.deviceId);
-                    DbHelper.getInstance(getContext()).update(Constants.deviceId,listBleData.get((Integer)msg.obj).getDeviceAddress(),recordData);
+                    if(getContext()!=null)
+                        DbHelper.getInstance(getContext()).update(Constants.deviceId,listBleData.get((Integer)msg.obj).getDeviceAddress(),recordData);
                     break;
             }
         }

@@ -30,7 +30,7 @@ dependencies {
     compile 'com.j256.ormlite:ormlite-android:4.48'
     compile 'com.jakewharton:butterknife:7.0.1'
 //    compile 'com.umeng.analytics:analytics:latest.integration'
-
+    compile 'com.coolerfall:android-app-daemon:1.2.0'
     compile 'io.reactivex:rxjava:1.0.9'
     compile 'io.reactivex:rxandroid:0.24.0'
     compile 'com.squareup.retrofit:retrofit:1.9.0'

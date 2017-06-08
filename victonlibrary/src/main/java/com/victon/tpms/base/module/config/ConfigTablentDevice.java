@@ -304,22 +304,22 @@ public class ConfigTablentDevice extends BaseActionBarActivity implements View.O
     }
     private void bundDevice(int states) {
         showDialog("开始配对模块。。。",false);
-        if(VictonBaseApplication.getInstance().usbService.receviceUsb==null) return;
+        if(UsbComService.receviceUsb==null) return;
         switch (state) {
             case 0:
-                VictonBaseApplication.getInstance().usbService.receviceUsb.sendData(DigitalTrans.hex2byte(Constants.PAIRED_LEFT_FROM));
+                UsbComService.receviceUsb.sendData(DigitalTrans.hex2byte(Constants.PAIRED_LEFT_FROM));
 //                VictonBaseApplication.getInstance().usbService.receviceUsb.sendData(DigitalTrans.hex2byte(Constants.PAIRED_LEFT_FROM));
                 break;
             case 1:
-                VictonBaseApplication.getInstance().usbService.receviceUsb.sendData(DigitalTrans.hex2byte(Constants.PAIRED_RIGHT_FROM));
+                UsbComService.receviceUsb.sendData(DigitalTrans.hex2byte(Constants.PAIRED_RIGHT_FROM));
 //                VictonBaseApplication.getInstance().usbService.receviceUsb.sendData(DigitalTrans.hex2byte(Constants.PAIRED_RIGHT_FROM));
                 break;
             case 3:
-                VictonBaseApplication.getInstance().usbService.receviceUsb.sendData(DigitalTrans.hex2byte(Constants.PAIRED_LEFT_BACK));
+                UsbComService.receviceUsb.sendData(DigitalTrans.hex2byte(Constants.PAIRED_LEFT_BACK));
 //                VictonBaseApplication.getInstance().usbService.receviceUsb.sendData(DigitalTrans.hex2byte(Constants.PAIRED_LEFT_BACK));
                 break;
             case 2:
-                VictonBaseApplication.getInstance().usbService.receviceUsb.sendData(DigitalTrans.hex2byte(Constants.PAIRED_RIGHT_BACK));
+                UsbComService.receviceUsb.sendData(DigitalTrans.hex2byte(Constants.PAIRED_RIGHT_BACK));
 //                VictonBaseApplication.getInstance().usbService.receviceUsb.sendData(DigitalTrans.hex2byte(Constants.PAIRED_RIGHT_BACK));
                 break;
         }

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    android:installLocation="internalOnly"
     package="com.xiaoan.tpms.usb">
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
@@ -7,7 +8,12 @@
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     <uses-permission android:name="android.permission.WRITE_SETTINGS"/>
     <uses-permission android:name="android.permission.WAKE_LOCK"/>
+    <uses-permission android:name="android.permission.CHANGE_WIFI_STATE"/>
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW"/>
+    <uses-permission android:name="android.permission.MEDIA_CONTENT_CONTROL"/>
+    <uses-permission android:name="android.permission.MOUNT_UNMOUNT_FILESYSTEMS"/>
+    <uses-permission android:name="android.permission.GET_TASKS"/>
+    <uses-permission android:name="android.permission.RESTART_PACKAGES" />
     <uses-feature android:name="android.hardware.usb.host"
         android:required="true" />
     <uses-permission
@@ -19,7 +25,6 @@
         android:icon="@mipmap/ic_logo"
         android:label="@string/app_name"
         android:name="com.victon.tpms.base.VictonBaseApplication"
-        android:supportsRtl="true"
         android:persistent="true"
         android:theme="@style/AppTheme">
         <activity android:name="com.victon.tpms.base.module.main.activity.MainForServiceActivity"
@@ -28,12 +33,12 @@
             android:configChanges="orientation|keyboard">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.DEFAULT"/>
                 <category android:name="android.intent.category.LAUNCHER" />
-                <meta-data
-                    android:name="android.hardware.usb.action.USB_DEVICE_ATTACHED"
-                    android:resource="@xml/device_filter" />
-                <action android:name="android.intent.action.USER_PRESENT" />
             </intent-filter>
+            <meta-data
+                android:name="android.hardware.usb.action.USB_DEVICE_ATTACHED"
+                android:resource="@xml/device_filter" />
         </activity>
         <service android:name="com.victon.tpms.common.usb.UsbComService"
             android:enabled="true" >
@@ -45,17 +50,7 @@
 
             <intent-filter>
                 <action android:name="android.hardware.usb.action.USB_DEVICE_ATTACHED"/>
-            </intent-filter>
-            <intent-filter>
                 <action android:name="android.hardware.usb.action.USB_DEVICE_DETACHED"/>
-            </intent-filter>
-            <intent-filter>
-                <action android:name="android.intent.action.MEDIA_MOUNTED"/>
-                <data android:scheme="file"/>
-            </intent-filter>
-            <intent-filter>
-                <action android:name="android.intent.action.MEDIA_EJECT"/>
-                <data android:scheme="file"/>
             </intent-filter>
         </receiver>
         <!--<receiver android:name="com.victon.tpms.base.module.main.ReceviceBraost">-->
@@ -63,17 +58,35 @@
                 <!--<action android:name="com.example.bluetooth.le.SCAN_FOR_RESULT"/>-->
             <!--</intent-filter>-->
         <!--</receiver>-->
-        <receiver android:name="com.victon.tpms.base.module.BootReceiver" >
-            <intent-filter>
+        <receiver android:name="com.victon.tpms.base.module.BootReceiver"
+            android:permission="android.permission.RECEIVE_BOOT_COMPLETED"
+            android:exported="true"
+            android:enabled="true">
+            <intent-filter android:priority="1000">
                 <action android:name="android.intent.action.USER_PRESENT" />
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
                 <action android:name="com.dbjtech.waiqin.destroy" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+            <intent-filter>
+                <action  android:name="android.net.conn.CONNECTIVITY_CHANGE"/>
+            </intent-filter>
+            <intent-filter >
+                <action android:name="android.intent.action.MEDIA_MOUNTED"/>
+                <action android:name="android.intent.action.MEDIA_UNMOUNTED"/>
+                <data android:scheme="file">
+                </data>
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.PACKAGE_ADDED" />
+                <action android:name="android.intent.action.PACKAGE_REMOVED" />
+                <action android:name="android.intent.action.PACKAGE_REPLACED" />
+                <data android:scheme="package" />
             </intent-filter>
         </receiver>
         <!--<activity android:name="com.victon.tpms.base.module.main.activity.MainForServiceActivity"-->
             <!--android:screenOrientation="landscape"-->
             <!--android:configChanges="orientation|keyboard">-->
-
         <!--</activity>-->
         <activity android:name="com.victon.tpms.base.module.config.ConfigTablentDevice"
             android:screenOrientation="landscape"
@@ -87,8 +100,9 @@
         <activity android:name="com.victon.tpms.base.module.setting.PersonTabletSetting"
             android:screenOrientation="landscape"
             android:configChanges="orientation|keyboard">
-
         </activity>
+        <service android:name="com.victon.tpms.common.usb.HeartService"
+            android:process=":JobService" />
     </application>
 
 </manifest>

@@ -3,18 +3,15 @@ package com.xiaoan.tpms.usb;
 import android.app.Activity;
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.ServiceConnection;
 import android.hardware.usb.UsbDevice;
 import android.hardware.usb.UsbDeviceConnection;
 import android.hardware.usb.UsbEndpoint;
 import android.hardware.usb.UsbInterface;
 import android.hardware.usb.UsbManager;
 import android.os.Bundle;
-import android.os.IBinder;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
@@ -124,25 +121,12 @@ public class MainActivity extends Activity {
         intentFilter.addDataScheme("file");
         intentFilter.addAction(UsbComService.SCAN_FOR_RESULT);
         registerReceiver(mUsbReceiver, intentFilter);
-//        Intent intent = new Intent(this,UsbComService.class);
-//        startService(intent);
-        Intent intent = new Intent(this, UsbComService.class);
-        bindService(intent,mServiceConnection,Context.BIND_AUTO_CREATE);
+        Intent intent = new Intent(this,UsbComService.class);
+        startService(intent);
     }
 
     private UsbComService usbService = null;
 
-    private ServiceConnection mServiceConnection = new ServiceConnection() {
-        @Override
-        public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
-            usbService = ((UsbComService.LocalBinder) iBinder).getService();
-        }
-
-        @Override
-        public void onServiceDisconnected(ComponentName componentName) {
-            usbService = null;
-        }
-    };
     @Override
     public void onDestroy() {
         unregisterReceiver(mUsbReceiver);

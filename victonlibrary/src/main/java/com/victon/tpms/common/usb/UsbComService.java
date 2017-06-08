@@ -13,7 +13,6 @@ import android.hardware.usb.UsbDeviceConnection;
 import android.hardware.usb.UsbInterface;
 import android.hardware.usb.UsbManager;
 import android.net.Uri;
-import android.os.Binder;
 import android.os.Build;
 import android.os.Handler;
 import android.os.IBinder;
@@ -66,7 +65,7 @@ public class UsbComService extends Service{
     private UsbDevice mUsbDevice;
     private PendingIntent mPermissionIntent;
 
-    public ReceviceUsbDataThread receviceUsb = null;
+    public static ReceviceUsbDataThread receviceUsb = null;
     private final BroadcastReceiver mUsbReceiver = new BroadcastReceiver() {
 
         public void onReceive(Context context, Intent intent) {
@@ -84,14 +83,27 @@ public class UsbComService extends Service{
                             if (connection.claimInterface(mInterface, true)) {
                                 Log.i(TAG, "找到接口");
                                 mDeviceConnection = connection;
-//                                Intent intent1 = new Intent(context,MainForServiceActivity.class);
-//                                context.startActivity(intent1);
                                 // 获取USB通讯的读写端点
-                                receviceUsb = new ReceviceUsbDataThread(UsbComService.this,mDeviceConnection,mInterface);
-                                receviceUsb.start();
+                                if(receviceUsb==null) {
+                                    receviceUsb = new ReceviceUsbDataThread(UsbComService.this, mDeviceConnection, mInterface);
+                                    receviceUsb.start();
+                                    Log.i(TAG, "打开线程");
+                                }
                                 receviceUsb.sendData(DigitalTrans.hex2byte(Constants.CHECK_IS_PARIED));
+                                timer.schedule(new TimerTask() {
+                                    @Override
+                                    public void run() {
+                                        receviceUsb.sendData(DigitalTrans.hex2byte(Constants.CHECK_IS_PARIED));
+                                    }
+                                },500);
+//                                }
 //                                getEndpoint(mDeviceConnection, mInterface);
 //                                sendMsgForUsb(new byte[]{1, 66, 67, 68});
+//                                if(!VictonBaseApplication.getInstance().isRunningForeground(context)){
+//                                    Intent intent1 = new Intent(context,MainForServiceActivity.class);
+//                                    intent1.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+//                                    context.startActivity(intent1);
+//                                }
                             } else {
                                 connection.close();
                             }
@@ -107,30 +119,17 @@ public class UsbComService extends Service{
     private UsbDeviceConnection mDeviceConnection;
     private boolean isFirst = false;
 
-    public class LocalBinder extends Binder {
-        public UsbComService getService() {
-            return UsbComService.this;
-        }
-    }
-
     @Override
     public IBinder onBind(Intent intent) {
-        return mBinder;
+        return null;
     }
-
-    @Override
-    public boolean onUnbind(Intent intent) {
-        // After using a given device, you should make sure that BluetoothGatt.close() is called
-        // such that resources are cleaned up properly.  In this particular example, close() is
-        // invoked when the UI is disconnected from the Service.
-        return super.onUnbind(intent);
-    }
-
-    private final IBinder mBinder = new UsbComService.LocalBinder();
-
     @Override
     public void onCreate() {
         super.onCreate();
+//        Daemon.run(this, UsbComService.class, Daemon.INTERVAL_ONE_MINUTE * 2);
+
+        IntentFilter filter = new IntentFilter(ACTION_USB_PERMISSION);
+        registerReceiver(mUsbReceiver, filter);
         timer = new Timer();
         timer.schedule(new TimerTask() {
             @Override
@@ -139,18 +138,7 @@ public class UsbComService extends Service{
             }
         },1000,20000);
         Logger.i(TAG,"onceate service");
-//        config();
-    }
-
-    @Override
-    public int onStartCommand(Intent intent, int flags, int startId) {
-        Logger.e(TAG,"onStartCommand service");
         config();
-//        flags = START_STICKY;
-        return super.onStartCommand(intent, flags, startId);
-    }
-    private void config(){
-        iniUsb();
         //刷新数据库
         List<Device> device = VictonBaseApplication.getDeviceDao().get(Constants.MY_CAR_DEVICE);
         if(device.size()>0){
@@ -158,19 +146,24 @@ public class UsbComService extends Service{
         }
         // 初始化
         initNotification();
-        //设置点击通知栏的动作为启动另外一个广播
-        Intent broadcastIntent = new Intent(this, NotificationReceiver.class);
-        broadcastIntent.setFlags(Intent.FLAG_ACTIVITY_MULTIPLE_TASK | Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED); // 关键的一步，设置启动模式
-        messagePendingIntent = PendingIntent.getBroadcast(this, 0, broadcastIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-        Notification localNotification = new Notification.Builder(this)
-                .setContentTitle(getString(R.string.app_name))
-                .setContentText(getString(R.string.app_name))
-                .setSmallIcon(R.drawable.ic_logo)
-                .build();
-//        Notification localNotification = new Notification.Builder(R.drawable.ic_logo, getString(R.string.app_name), System.currentTimeMillis());
-//        PendingIntent localPendingIntent = PendingIntent.getActivity(this, 0, new Intent(this, MainForServiceActivity.class), 0);
-//        localNotification.setLatestEventInfo(this, "USBTPMS", getString(R.string.app_name), localPendingIntent);
-        startForeground(273, localNotification);
+    }
+
+    @Override
+    public void onTrimMemory(int level) {
+        super.onTrimMemory(level);
+//        Logger.e("一键清除！");
+//        Intent intent = new Intent(this, UsbComService.class);
+//        startService(intent);
+    }
+
+    @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
+        Logger.e(TAG,"onStartCommand service");
+//        flags = START_STICKY;
+        return super.onStartCommand(intent, flags, startId);
+    }
+    private void config(){
+        iniUsb();
     }
     private void iniUsb() {
         // 获取USB设备
@@ -195,9 +188,6 @@ public class UsbComService extends Service{
                 Log.i(TAG, "找到设备");
                 if(mPermissionIntent==null)
                     mPermissionIntent = PendingIntent.getBroadcast(this, 0, new Intent(ACTION_USB_PERMISSION), 0);
-                IntentFilter filter = new IntentFilter(ACTION_USB_PERMISSION);
-                filter.addAction(SCAN_FOR_RESULT);
-                registerReceiver(mUsbReceiver, filter);
                 manager.requestPermission(mUsbDevice, mPermissionIntent);
             }
         }
@@ -224,6 +214,19 @@ public class UsbComService extends Service{
     }
 
     private void initNotification() {
+        //设置点击通知栏的动作为启动另外一个广播
+        Intent broadcastIntent = new Intent(this, NotificationReceiver.class);
+        broadcastIntent.setFlags(Intent.FLAG_ACTIVITY_MULTIPLE_TASK | Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED); // 关键的一步，设置启动模式
+        messagePendingIntent = PendingIntent.getBroadcast(this, 0, broadcastIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+        Notification localNotification = new Notification.Builder(this)
+                .setContentTitle(getString(R.string.app_name))
+                .setContentText(getString(R.string.content))
+                .setSmallIcon(R.drawable.ic_logo)
+                .build();
+//        Notification localNotification = new Notification.Builder(R.drawable.ic_logo, getString(R.string.app_name), System.currentTimeMillis());
+//        PendingIntent localPendingIntent = PendingIntent.getActivity(this, 0, new Intent(this, MainForServiceActivity.class), 0);
+//        localNotification.setLatestEventInfo(this, "USBTPMS", getString(R.string.app_name), localPendingIntent);
+        startForeground(273, localNotification);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
             messageNotification = new Notification.Builder(this)
                     .setSmallIcon(R.drawable.ic_logo)
@@ -247,7 +250,7 @@ public class UsbComService extends Service{
     @Override
     public void onDestroy() {
         super.onDestroy();
-        stopForeground(true);
+//        stopForeground(true);
         unregisterReceiver(mUsbReceiver);
 //        Intent intent = new Intent("com.dbjtech.waiqin.destroy");
 //        sendBroadcast(intent);
@@ -255,7 +258,10 @@ public class UsbComService extends Service{
         timer.cancel();
         timer=null;
         Logger.e(TAG,"service close!");
-        receviceUsb = null;
+        if(receviceUsb!=null){
+            receviceUsb.isRecevice = true;
+            receviceUsb = null;
+        }
     }
 
     private void bleStringToDouble(byte[] data) {

@@ -86,5 +86,6 @@
         <string name="defaulttemp">--</string>
         <string name="defaultdate"></string>
         <string name="defaulttime">--</string>
-        <string name="codeVersion">版本1.1.7-HD</string>
+        <string name="codeVersion">版本1.1.7</string>
+        <string name="content">后台运行中...</string>
     </resources>

@@ -21,6 +21,7 @@ import com.victon.tpms.base.db.entity.Device;
 import com.victon.tpms.base.module.config.ConfigTablentDevice;
 import com.victon.tpms.base.widget.LoadingDialog;
 import com.victon.tpms.base.widget.NotifyDialog;
+import com.victon.tpms.common.usb.UsbComService;
 import com.victon.tpms.common.usb.UsbData;
 import com.victon.tpms.common.utils.Constants;
 import com.victon.tpms.common.utils.DigitalTrans;
@@ -209,7 +210,7 @@ public class BundTalentDeviceFragment extends BaseBleConnetFragment implements V
     };
 
     private void unBundDevice(Button tvNext,int state) {
-        if(VictonBaseApplication.getInstance().usbService.receviceUsb==null) return;
+        if(UsbComService.receviceUsb==null) return;
         tvNext.setText("点击绑定");
         tvNext.setBackgroundResource(R.mipmap.b_btn);
         Logger.e(TAG,"正在解绑。。。"+state);
@@ -218,42 +219,42 @@ public class BundTalentDeviceFragment extends BaseBleConnetFragment implements V
         switch (state) {
             case 0:
                 manageDevice.setLeftFDevice(null);
-                VictonBaseApplication.getInstance().usbService.receviceUsb.sendData(DigitalTrans.hex2byte(Constants.CANCEL_PAIRED));
+                UsbComService.receviceUsb.sendData(DigitalTrans.hex2byte(Constants.CANCEL_PAIRED));
                 break;
             case 1:
                 manageDevice.setRightFDevice(null);
-                VictonBaseApplication.getInstance().usbService.receviceUsb.sendData(DigitalTrans.hex2byte(Constants.CANCEL_PAIRED));
+                UsbComService.receviceUsb.sendData(DigitalTrans.hex2byte(Constants.CANCEL_PAIRED));
                 break;
             case 2:
                 manageDevice.setLeftBDevice(null);
-                VictonBaseApplication.getInstance().usbService.receviceUsb.sendData(DigitalTrans.hex2byte(Constants.CANCEL_PAIRED));
+                UsbComService.receviceUsb.sendData(DigitalTrans.hex2byte(Constants.CANCEL_PAIRED));
                 break;
             case 3:
                 manageDevice.setRightBDevice(null);
-                VictonBaseApplication.getInstance().usbService.receviceUsb.sendData(DigitalTrans.hex2byte(Constants.CANCEL_PAIRED));
+                UsbComService.receviceUsb.sendData(DigitalTrans.hex2byte(Constants.CANCEL_PAIRED));
                 break;
         }
 
     }
     private void bundDevice(int states) {
-        if(VictonBaseApplication.getInstance().usbService.receviceUsb==null) return;
+        if(UsbComService.receviceUsb==null) return;
         showDialog("开始配对模块。。。",false);
         state = states;
         switch (states) {
             case 0:
-                VictonBaseApplication.getInstance().usbService.receviceUsb.sendData(DigitalTrans.hex2byte(Constants.PAIRED_LEFT_FROM));
+                UsbComService.receviceUsb.sendData(DigitalTrans.hex2byte(Constants.PAIRED_LEFT_FROM));
 //                VictonBaseApplication.getInstance().usbService.receviceUsb.sendData(DigitalTrans.hex2byte(Constants.PAIRED_LEFT_FROM));
                 break;
             case 1:
-                VictonBaseApplication.getInstance().usbService.receviceUsb.sendData(DigitalTrans.hex2byte(Constants.PAIRED_RIGHT_FROM));
+                UsbComService.receviceUsb.sendData(DigitalTrans.hex2byte(Constants.PAIRED_RIGHT_FROM));
 //                VictonBaseApplication.getInstance().usbService.receviceUsb.sendData(DigitalTrans.hex2byte(Constants.PAIRED_RIGHT_FROM));
                 break;
             case 2:
-                VictonBaseApplication.getInstance().usbService.receviceUsb.sendData(DigitalTrans.hex2byte(Constants.PAIRED_LEFT_BACK));
+                UsbComService.receviceUsb.sendData(DigitalTrans.hex2byte(Constants.PAIRED_LEFT_BACK));
 //                VictonBaseApplication.getInstance().usbService.receviceUsb.sendData(DigitalTrans.hex2byte(Constants.PAIRED_LEFT_BACK));
                 break;
             case 3:
-                VictonBaseApplication.getInstance().usbService.receviceUsb.sendData(DigitalTrans.hex2byte(Constants.PAIRED_RIGHT_BACK));
+                UsbComService.receviceUsb.sendData(DigitalTrans.hex2byte(Constants.PAIRED_RIGHT_BACK));
 //                VictonBaseApplication.getInstance().usbService.receviceUsb.sendData(DigitalTrans.hex2byte(Constants.PAIRED_RIGHT_BACK));
                 break;
         }
@@ -267,11 +268,11 @@ public class BundTalentDeviceFragment extends BaseBleConnetFragment implements V
            if (NotifyDialog.ACTION_BTN_STATE.equals(action)) {
                showDialog("正在配对模块。。。",false);
                isFirst = true;
-               VictonBaseApplication.getInstance().usbService.receviceUsb.sendData(DigitalTrans.hex2byte(Constants.CANCEL_PAIRED));
+               UsbComService.receviceUsb.sendData(DigitalTrans.hex2byte(Constants.CANCEL_PAIRED));
                bundDevice(state);
             }else if (NotifyDialog.ACTION_BTN_NEXT.equals(action)) {
                Logger.e(TAG,"完成"+state);
-               VictonBaseApplication.getInstance().usbService.receviceUsb.sendData(DigitalTrans.hex2byte(Constants.CANCEL_PAIRED));
+               UsbComService.receviceUsb.sendData(DigitalTrans.hex2byte(Constants.CANCEL_PAIRED));
                isFirst = true;
             }
         }
